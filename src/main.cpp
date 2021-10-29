@@ -6,17 +6,32 @@ int CALLBACK WinMain(
     LPSTR lpCmdLine,
     int nCmdShow
 ){
-   Window wnd(640,480,TEXT("Donky Fart Box"));
-
-    MSG msg;
-    BOOL gResult;    
-    while (gResult = GetMessage(&msg,nullptr,0,0))
+    try
     {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        Window wnd(640,480,TEXT("Donky Fart Box"));
+
+        MSG msg;
+        BOOL gResult;    
+        while (gResult = GetMessage(&msg,nullptr,0,0))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        if(gResult == -1){
+            throw LAST_EXCEPTION();
+        }
+        return msg.wParam;
     }
-    if(gResult == -1){
-        return -1;
+    catch(const FordException& e){
+        MessageBoxA(nullptr,e.what(),e.GetType(),MB_OK|MB_ICONEXCLAMATION);
     }
-    return msg.wParam;
+    catch(const std::exception& e)
+    {
+        MessageBoxA(nullptr,e.what(),"Standard Exception",MB_OK|MB_ICONEXCLAMATION);
+    }
+    catch(...){
+        MessageBoxA(nullptr,"No Details Available","Standard Exception",MB_OK|MB_ICONEXCLAMATION);
+    }
+    return -1;
+
 }

@@ -41,13 +41,15 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 //
 // Window
 //
-Window::Window(int width, int height, const TCHAR* name) noexcept{
+Window::Window(int width, int height, const TCHAR* name){
     RECT wr;
     wr.left = 100;
     wr.right = width + wr.left;
     wr.top = 100;
     wr.bottom = height + wr.top;
-    AdjustWindowRect(&wr,WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,FALSE);
+    if(FAILED(AdjustWindowRect(&wr,WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,FALSE) ) ){
+        throw LAST_EXCEPTION();
+    }
 
     hWnd = CreateWindow(
         WindowClass::GetName(),name,
@@ -55,6 +57,9 @@ Window::Window(int width, int height, const TCHAR* name) noexcept{
         CW_USEDEFAULT,CW_USEDEFAULT,wr.right-wr.left,wr.bottom-wr.top,
         nullptr,nullptr,WindowClass::GetInstance(),this);
 
+    if(hWnd == nullptr){
+        throw LAST_EXCEPTION();
+    }
     ShowWindow(hWnd,SW_SHOWDEFAULT);
 }
 
@@ -121,4 +126,46 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         break;
     }
     return DefWindowProc(hWnd,msg,wParam,lParam);
+}
+
+
+
+//
+// Exception
+//
+Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept: FordException(line,file), hr(hr){
+
+}
+const char* Window::Exception::what() const noexcept{
+    std::ostringstream oss;
+    oss << "[Error Code] " << GetErrorCode() << std::endl
+        << "[Description] " << GetErrorString() << std::endl
+        << GetOriginString();
+    whatBuffer = oss.str();
+    return whatBuffer.c_str();
+}
+const char* Window::Exception::GetType() const noexcept{
+    return "Ford Window Exception";
+}
+
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept{
+    char* pMsgBuf = nullptr;
+    DWORD nMsgLen = FormatMessageA(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM| FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr,hr,MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),
+        reinterpret_cast<LPSTR>(&pMsgBuf),0,nullptr
+    );
+
+    if(nMsgLen == 0){
+        return "undefined error code";
+    }
+    std::string errorString = pMsgBuf;
+    LocalFree(pMsgBuf);
+    return errorString;
+}
+HRESULT Window::Exception::GetErrorCode() const noexcept{
+    return hr;
+}
+std::string Window::Exception::GetErrorString() const noexcept{
+    return TranslateErrorCode(hr);
 }
