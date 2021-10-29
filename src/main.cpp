@@ -16,8 +16,8 @@ int CALLBACK WinMain(
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
-            if(wnd.kbd.KeyIsPressed(VK_SPACE)){
-                MessageBoxA(nullptr,"Something Happen","Standard Exception",MB_OK|MB_ICONEXCLAMATION);
+            if(wnd.kbd.KeyIsPressed(VK_MENU)){
+                MessageBoxA(nullptr,"Something Happen","The alt Keys was pressed",MB_OK|MB_ICONEXCLAMATION);
             }
         }
         if(gResult == -1){

@@ -97,10 +97,14 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         break;
 
     case WM_KEYDOWN:
-        kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+    case WM_SYSKEYDOWN:
+        if( !(lParam & 0X40000000) || kbd.AutorepeatIsEnabled() ){
+            kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+        }
         break;
 
     case WM_KEYUP:
+    case WM_SYSKEYUP:
         kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
         break;
 
