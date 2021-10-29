@@ -92,25 +92,20 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
     case WM_CLOSE:
         PostQuitMessage(0);
         break;
+    case WM_KILLFOCUS:
+        kbd.ClearState();
+        break;
 
     case WM_KEYDOWN:
-        if(wParam == 'D'){
-            SetWindowText(hWnd,TEXT("Respects"));
-        }
+        kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
         break;
 
     case WM_KEYUP:
-        if(wParam == 'F'){
-            SetWindowText(hWnd,TEXT("Danger"));
-        }
+        kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
         break;
 
     case WM_CHAR:
-        {
-            static std::string title;
-            title.push_back((char)wParam);
-            SetWindowTextA(hWnd,title.c_str());
-        }
+        kbd.OnChar(static_cast<unsigned char>(wParam));
         break;
 
     case WM_LBUTTONDOWN:

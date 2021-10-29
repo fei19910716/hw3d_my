@@ -16,6 +16,9 @@ int CALLBACK WinMain(
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+            if(wnd.kbd.KeyIsPressed(VK_SPACE)){
+                MessageBoxA(nullptr,"Something Happen","Standard Exception",MB_OK|MB_ICONEXCLAMATION);
+            }
         }
         if(gResult == -1){
             throw LAST_EXCEPTION();

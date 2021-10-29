@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include "FordException.h"
+#include "Keyboard.h"
 class Window{
 public:
     class Exception : public FordException{
@@ -46,6 +47,8 @@ private:
 
     LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 
+public:
+    Keyboard kbd;
 private:
     int width;
     int height;
