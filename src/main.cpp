@@ -1,5 +1,6 @@
 #define NOUNICODE
 #include <iostream>
+#include <sstream>
 #include <windows.h>
 #include "WindowsMessageMap.h"
 
@@ -11,6 +12,35 @@ LRESULT CALLBACK WndProc(HWND hWnd,UINT msg, WPARAM wParam, LPARAM lParam){
     {
     case WM_CLOSE:
         PostQuitMessage(0);
+        break;
+
+    case WM_KEYDOWN:
+        if(wParam == 'D'){
+            SetWindowText(hWnd,TEXT("Respects"));
+        }
+        break;
+
+    case WM_KEYUP:
+        if(wParam == 'F'){
+            SetWindowText(hWnd,TEXT("Danger"));
+        }
+        break;
+
+    case WM_CHAR:
+        {
+            static std::string title;
+            title.push_back((char)wParam);
+            SetWindowTextA(hWnd,title.c_str());
+        }
+        break;
+
+    case WM_LBUTTONDOWN:
+        {
+            const POINTS pt = MAKEPOINTS(lParam);
+            std::ostringstream oss;
+            oss << "("<<pt.x << "," << pt.y << ")";
+            SetWindowTextA(hWnd,oss.str().c_str() );
+        }
         break;
     
     default:
