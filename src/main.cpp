@@ -16,16 +16,24 @@ int CALLBACK WinMain(
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
-            while (!wnd.mouse.IsEmpty())
-            {
-                const auto e = wnd.mouse.Read();
-                if(e.GetType() == Mouse::Event::Type::kMove){
-                    std::ostringstream oss;
-					oss << "Mouse Position: (" << e.GetPosX() << "," << e.GetPosY() << ")";
-					wnd.SetTitle( oss.str() );
-
-                }
-            }
+			// test code
+			while( !wnd.mouse.IsEmpty() )
+			{
+				const auto e = wnd.mouse.Read();
+				switch( e.GetType() )
+				{
+				case Mouse::Event::Type::kLeave:
+					wnd.SetTitle( "Gone!" );
+					break;
+				case Mouse::Event::Type::kMove:
+					{
+						std::ostringstream oss;
+						oss << "Mouse moved to (" << e.GetPosX() << "," << e.GetPosY() << ")";
+						wnd.SetTitle( oss.str() );
+					}
+					break;
+				}
+			}
             
         }
         if(gResult == -1){

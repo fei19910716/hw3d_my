@@ -41,7 +41,9 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 //
 // Window
 //
-Window::Window(int width, int height, const TCHAR* name){
+Window::Window(int width, int height, const TCHAR* name)
+    :width(width),height(height)
+{
     RECT wr;
     wr.left = 100;
     wr.right = width + wr.left;
@@ -122,7 +124,22 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
     case WM_MOUSEMOVE:
         POINTS pt = MAKEPOINTS(lParam);
-        mouse.OnMouseMove(pt.x,pt.y);
+        if(pt.x >=0 && pt.x < width && pt.y >=0 && pt.y < height){
+            mouse.OnMouseMove(pt.x,pt.y);
+            if(!mouse.IsInWindow()){
+                SetCapture(hWnd);
+                mouse.OnMouseEnter();
+            }
+        }else{
+            if(wParam & (MK_LBUTTON | MK_RBUTTON) ){
+                // 鼠标移出window, 但是案件仍然按下状态时，capture it
+                mouse.OnMouseMove( pt.x,pt.y ); 
+            }else{
+                ReleaseCapture();
+                mouse.OnMouseLeave(); 
+            }
+        }
+        
         break;
     case WM_LBUTTONDOWN:
 	{
@@ -140,12 +157,24 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	{
 		const POINTS pt = MAKEPOINTS( lParam );
 		mouse.OnLeftReleased( pt.x,pt.y );
+        // release mouse if outside of window
+		if( pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height )
+		{
+			ReleaseCapture();
+			mouse.OnMouseLeave();
+		}
 		break;
 	}
 	case WM_RBUTTONUP:
 	{
 		const POINTS pt = MAKEPOINTS( lParam );
 		mouse.OnRightReleased( pt.x,pt.y );
+        // release mouse if outside of window
+		if( pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height )
+		{
+			ReleaseCapture();
+			mouse.OnMouseLeave();
+		}
 		break;
 	}
 
