@@ -1,5 +1,5 @@
 #include "Window.h"
-
+#include <sstream>
 int CALLBACK WinMain(
     HINSTANCE hInstance,
     HINSTANCE hPrev,
@@ -16,6 +16,17 @@ int CALLBACK WinMain(
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+            while (!wnd.mouse.IsEmpty())
+            {
+                const auto e = wnd.mouse.Read();
+                if(e.GetType() == Mouse::Event::Type::kMove){
+                    std::ostringstream oss;
+					oss << "Mouse Position: (" << e.GetPosX() << "," << e.GetPosY() << ")";
+					wnd.SetTitle( oss.str() );
+
+                }
+            }
+            
         }
         if(gResult == -1){
             throw LAST_EXCEPTION();
