@@ -102,7 +102,7 @@ void Graphics::DrawTestTriangle(float angle){
 		{ -0.5f,-0.5f,0,0,255,0 },
 		{ -0.3f,0.3f,0,255,0,0 },
 		{ 0.3f,0.3f,0,0,255,0 },
-		{ 0.0f,-0.8f,255,0,0,0 },
+		{ 0.0f,-1.0f,255,0,0,0 },
 	};
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC bd = {};
@@ -195,8 +195,8 @@ void Graphics::DrawTestTriangle(float angle){
 	};
 	const ConstantBuffer cb = {
 		{
-			std::cos(angle),std::sin(angle),0,0,
-			-std::sin(angle),std::cos(angle),0,0,
+			(3.0f / 4.0f) * std::cos(angle),std::sin(angle),0,0,
+			(3.0f / 4.0f) * -std::sin(angle),std::cos(angle),0,0,
 			0,0,1,0,
 			0,0,0,1,
 		}
