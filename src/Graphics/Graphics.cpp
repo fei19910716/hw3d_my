@@ -81,17 +81,27 @@ void Graphics::DrawTestTriangle(){
 
 	struct Vertex
 	{
-		float x;
-		float y;
-		unsigned char r,g,b,a;
+		struct 
+		{
+			float x;
+			float y;
+		} pos;
+		
+		struct 
+		{
+			unsigned char r,g,b,a;
+		} color;
 	};
 
 	// create vertex buffer (1 2d triangle at center of screen)
-	const Vertex vertices[] =
+	Vertex vertices[] =
 	{
 		{ 0.0f,0.5f,255,0,0,0 },
 		{ 0.5f,-0.5f,0,255,0,0 },
 		{ -0.5f,-0.5f,0,0,255,0 },
+		{ -0.3f,0.3f,0,255,0,0 },
+		{ 0.3f,0.3f,0,0,255,0 },
+		{ 0.0f,-0.8f,255,0,0,0 },
 	};
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC bd = {};
@@ -147,6 +157,35 @@ void Graphics::DrawTestTriangle(){
 	));
 	pContext->IASetInputLayout(pInputLayout.Get());
 
+	// create index buffer
+	const unsigned short indices[] = {
+		0,1,2,
+		0,2,3,
+		0,4,1,
+		2,1,5,
+	};
+	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
+	D3D11_BUFFER_DESC ibd = {};
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.ByteWidth = sizeof(indices);
+	ibd.CPUAccessFlags = 0u;
+	ibd.MiscFlags = 0u;
+	ibd.StructureByteStride = sizeof(unsigned short);
+	ibd.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA isd= {};
+	isd.pSysMem = indices;
+	GFX_THROW_INFO(pDevice->CreateBuffer(
+		&ibd,
+		&isd,
+		pIndexBuffer.GetAddressOf()
+	));
+	pContext->IASetIndexBuffer(
+		pIndexBuffer.Get(),
+		DXGI_FORMAT_R16_UINT,
+		0u);
+
+
 	// create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
 	GFX_THROW_INFO( D3DCompileFromFile(L"D:\\GameEngine\\DirectX-Dev\\hw3d_my\\assets\\shaders\\PixelShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
@@ -170,7 +209,7 @@ void Graphics::DrawTestTriangle(){
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u,&vp);
 
-	GFX_THROW_INFO_ONLY( pContext->Draw( 3u,0u ) );
+	GFX_THROW_INFO_ONLY( pContext->DrawIndexed( (UINT)std::size( indices ),0u,0u ) );
 }
 void Graphics::EndFrame()
 {
