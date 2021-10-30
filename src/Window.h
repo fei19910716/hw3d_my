@@ -4,6 +4,7 @@
 #include "FordException.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include <optional>
 class Window{
 public:
     class Exception : public FordException{
@@ -42,6 +43,7 @@ public:
     Window(const Window& ) = delete;
     Window& operator=(const Window&) = delete;
     void SetTitle(const std::string& title);
+    static std::optional<int> ProcessMessages();
 private:
     static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
     static LRESULT CALLBACK HandleMsgTrunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
