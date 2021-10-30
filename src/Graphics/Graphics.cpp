@@ -83,14 +83,15 @@ void Graphics::DrawTestTriangle(){
 	{
 		float x;
 		float y;
+		float r,g,b;
 	};
 
 	// create vertex buffer (1 2d triangle at center of screen)
 	const Vertex vertices[] =
 	{
-		{ 0.0f,0.5f },
-		{ 0.5f,-0.5f },
-		{ -0.5f,-0.5f },
+		{ 0.0f,0.5f,1.0f,0.0f,0.0f },
+		{ 0.5f,-0.5f,0.0f,1.0f,0.0f },
+		{ -0.5f,-0.5f,0.0f,0.0f,1.0f },
 	};
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC bd = {};
@@ -136,7 +137,8 @@ void Graphics::DrawTestTriangle(){
 	// input (vertex) layout (2d position only)
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 	const D3D11_INPUT_ELEMENT_DESC ied[] = {
-		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0}
+		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"Color",0,DXGI_FORMAT_R32G32B32_FLOAT,0,8,D3D11_INPUT_PER_VERTEX_DATA,0}
 	};
 	GFX_THROW_INFO(pDevice->CreateInputLayout(
 		ied,std::size(ied),pBlob->GetBufferPointer(),
