@@ -18,6 +18,8 @@
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException( __LINE__,__FILE__,(hr) )
 #endif
 
+namespace wrl = Microsoft::WRL;
+
 Graphics::Graphics(HWND hWnd){
     DXGI_SWAP_CHAIN_DESC sd = {};
     ZeroMemory(&sd, sizeof(DXGI_SWAP_CHAIN_DESC));
@@ -59,31 +61,14 @@ Graphics::Graphics(HWND hWnd){
 		&pContext
 	) );
 
-    ID3D11Resource* pBackBuffer = nullptr;
-    GFX_THROW_INFO(pSwap->GetBuffer(0,__uuidof(ID3D11Resource),
-        reinterpret_cast<void**>(&pBackBuffer) ) );
-    GFX_THROW_INFO(pDevice->CreateRenderTargetView(pBackBuffer,nullptr,&pTarget) );
-    pBackBuffer->Release();
+    wrl::ComPtr<ID3D11Resource> pBackBuffer;
+    GFX_THROW_INFO(pSwap->GetBuffer(0,__uuidof(ID3D11Resource),&pBackBuffer ) );
+    GFX_THROW_INFO(pDevice->CreateRenderTargetView(pBackBuffer.Get(),nullptr,&pTarget) );
 }
 
-Graphics::~Graphics()
-{
-	if( pContext != nullptr )
-	{
-		pContext->Release();
-	}
-	if( pSwap != nullptr )
-	{
-		pSwap->Release();
-	}
-	if( pDevice != nullptr )
-	{
-		pDevice->Release();
-	}
-    if( pTarget != nullptr )
-	{
-		pTarget->Release();
-	}
+void Graphics::ClearBuffer(float red, float green, float blue) noexcept{
+	const float color[] = {red, green, blue, 1.0f};
+	pContext->ClearRenderTargetView(pTarget.Get(),color);
 }
 
 void Graphics::EndFrame()

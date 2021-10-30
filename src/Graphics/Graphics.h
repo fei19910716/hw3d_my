@@ -3,6 +3,7 @@
 #include "DXGIDebugInfoManager.h"
 #include <Windows.h>
 #include <d3d11.h>
+#include <wrl.h>
 #include <vector>
 class Graphics{
 public:
@@ -35,18 +36,15 @@ public:
     Graphics(HWND hWnd);
     Graphics( const Graphics& ) = delete;
 	Graphics& operator=( const Graphics& ) = delete;
-    ~Graphics();
+    ~Graphics() = default;
     void EndFrame();
-    void ClearBuffer(float red, float green, float blue) noexcept{
-        const float color[] = {red, green, blue, 1.0f};
-        pContext->ClearRenderTargetView(pTarget,color);
-    }
+    void ClearBuffer(float red, float green, float blue) noexcept;
 
 private:
-    ID3D11Device* pDevice = nullptr;
-    IDXGISwapChain* pSwap = nullptr;
-    ID3D11DeviceContext* pContext = nullptr;
-    ID3D11RenderTargetView* pTarget = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+    Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
+    Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 
     #ifndef NDEBUG
 	DXGIDebugInfoManager infoManager; // debug模式下需要查询驱动debug信息
