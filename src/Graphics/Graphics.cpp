@@ -2,6 +2,7 @@
 #include "DXError/dxerr.h"
 #include <d3dcompiler.h>
 #include <sstream>
+#include <cmath>
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -75,7 +76,7 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept{
 	pContext->ClearRenderTargetView(pTarget.Get(),color);
 }
 
-void Graphics::DrawTestTriangle(){
+void Graphics::DrawTestTriangle(float angle){
 	namespace wrl = Microsoft::WRL;
 	HRESULT hr;
 
@@ -184,6 +185,43 @@ void Graphics::DrawTestTriangle(){
 		pIndexBuffer.Get(),
 		DXGI_FORMAT_R16_UINT,
 		0u);
+
+	// create constant buffer for transformation matrix
+	struct ConstantBuffer
+	{
+		struct{
+			float element[4][4];
+		} transform;
+	};
+	const ConstantBuffer cb = {
+		{
+			std::cos(angle),std::sin(angle),0,0,
+			-std::sin(angle),std::cos(angle),0,0,
+			0,0,1,0,
+			0,0,0,1,
+		}
+	};
+	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
+	D3D11_BUFFER_DESC cbd;
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.ByteWidth = sizeof(cb);
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u;
+	cbd.StructureByteStride = sizeof(ConstantBuffer);
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+
+	D3D11_SUBRESOURCE_DATA csd = {};
+	csd.pSysMem = &cb;
+	GFX_THROW_INFO(pDevice->CreateBuffer(
+		&cbd,
+		&csd,
+		pConstantBuffer.GetAddressOf()
+	));
+	pContext->VSSetConstantBuffers(
+		0u,
+		1u,
+		pConstantBuffer.GetAddressOf()
+	);
 
 
 	// create pixel shader
