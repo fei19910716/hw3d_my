@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "FTimer.h"
 
 class App{
 public:
@@ -10,4 +11,5 @@ private:
     void DoFrame();
 private:
     Window wnd;
+    FTimer timer;
 };
