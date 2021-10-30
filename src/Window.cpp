@@ -63,6 +63,8 @@ Window::Window(int width, int height, const TCHAR* name)
         throw LAST_EXCEPTION();
     }
     ShowWindow(hWnd,SW_SHOWDEFAULT);
+    // create graphics object
+	pGraphics = std::make_unique<Graphics>( hWnd );
 }
 
 Window::~Window(){
@@ -98,6 +100,12 @@ std::optional<int> Window::ProcessMessages()
 	// return empty optional when not quitting app
 	return {};
 }
+
+Graphics& Window::GetGraphics()
+{
+	return *pGraphics;
+}
+
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept{
     if(msg == WM_NCCREATE){
