@@ -1,12 +1,12 @@
 #include "DXGIDebugInfoManager.h"
 #include "Window.h"
 #include "Graphics/Graphics.h"
+#include "GraphicsThrowMacros.h"
+#include "WindowThrowMacros.h"
 #include <dxgidebug.h>
 #include <memory>
 
 #pragma comment(lib, "dxguid.lib")
-
-#define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw Graphics::HrException( __LINE__,__FILE__,hr )
 
 DXGIDebugInfoManager::DXGIDebugInfoManager(){
     // define function signature of DXGIGetDebugInterface
