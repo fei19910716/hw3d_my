@@ -133,6 +133,18 @@ void Graphics::DrawTestTriangle(){
 	));
 	pContext->VSSetShader(pVertexShader.Get(),nullptr,0u);
 
+	// input (vertex) layout (2d position only)
+	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
+	const D3D11_INPUT_ELEMENT_DESC ied[] = {
+		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0}
+	};
+	GFX_THROW_INFO(pDevice->CreateInputLayout(
+		ied,std::size(ied),pBlob->GetBufferPointer(),
+		pBlob->GetBufferSize(),
+		&pInputLayout
+	));
+	pContext->IASetInputLayout(pInputLayout.Get());
+
 	// create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
 	GFX_THROW_INFO( D3DCompileFromFile(L"D:\\GameEngine\\DirectX-Dev\\hw3d_my\\assets\\shaders\\PixelShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
@@ -143,6 +155,9 @@ void Graphics::DrawTestTriangle(){
 	pContext->PSSetShader( pPixelShader.Get(),nullptr,0u );
 
 	pContext->OMSetRenderTargets(1u,pTarget.GetAddressOf(),nullptr);
+
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 
 	D3D11_VIEWPORT vp;
 	vp.Width = 640;
