@@ -47,7 +47,7 @@ Window::Window(int width, int height, const TCHAR* name){
     wr.right = width + wr.left;
     wr.top = 100;
     wr.bottom = height + wr.top;
-    if(FAILED(AdjustWindowRect(&wr,WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,FALSE) ) ){
+    if(0 == (AdjustWindowRect(&wr,WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,FALSE) ) ){
         throw LAST_EXCEPTION();
     }
 
@@ -65,6 +65,14 @@ Window::Window(int width, int height, const TCHAR* name){
 
 Window::~Window(){
     DestroyWindow(hWnd);
+}
+
+void Window::SetTitle( const std::string& title )
+{
+	if( SetWindowText( hWnd,title.c_str() ) == 0 )
+	{
+		throw LAST_EXCEPTION();
+	}
 }
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept{
@@ -112,12 +120,46 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         kbd.OnChar(static_cast<unsigned char>(wParam));
         break;
 
+    case WM_MOUSEMOVE:
+        POINTS pt = MAKEPOINTS(lParam);
+        mouse.OnMouseMove(pt.x,pt.y);
+        break;
     case WM_LBUTTONDOWN:
+	{
+		const POINTS pt = MAKEPOINTS( lParam );
+		mouse.OnLeftPressed( pt.x,pt.y );
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		const POINTS pt = MAKEPOINTS( lParam );
+		mouse.OnRightPressed( pt.x,pt.y );
+		break;
+	}
+	case WM_LBUTTONUP:
+	{
+		const POINTS pt = MAKEPOINTS( lParam );
+		mouse.OnLeftReleased( pt.x,pt.y );
+		break;
+	}
+	case WM_RBUTTONUP:
+	{
+		const POINTS pt = MAKEPOINTS( lParam );
+		mouse.OnRightReleased( pt.x,pt.y );
+		break;
+	}
+
+    case WM_MOUSEWHEEL:
         {
             const POINTS pt = MAKEPOINTS(lParam);
-            std::ostringstream oss;
-            oss << "("<<pt.x << "," << pt.y << ")";
-            SetWindowTextA(hWnd,oss.str().c_str() );
+            if(GET_WHEEL_DELTA_WPARAM(wParam) > 0){
+                mouse.OnWheelUp(pt.x,pt.y);
+            }else if(GET_WHEEL_DELTA_WPARAM(wParam) < 0){
+                mouse.OnWheelDown(pt.x,pt.y);
+            }
+            // std::ostringstream oss;
+            // oss << "("<<pt.x << "," << pt.y << ")";
+            // SetWindowTextA(hWnd,oss.str().c_str() );
         }
         break;
     
