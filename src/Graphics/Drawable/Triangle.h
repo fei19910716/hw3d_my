@@ -1,7 +1,7 @@
 #pragma once
-#include "Drawable.h"
+#include "DrawableBase.h"
 
-class Triangle : public Drawable
+class Triangle : public DrawableBase<Triangle>
 {
 public:
 	Triangle( Graphics& gfx) noexcept;

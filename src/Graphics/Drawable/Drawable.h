@@ -6,6 +6,8 @@
 class Bindable;
 
 class Drawable{
+    template<typename T>
+    friend class DrawableBase;
 public:
     Drawable() = default;
     Drawable(const Drawable&) = delete;
@@ -19,6 +21,9 @@ public:
     virtual ~Drawable()  = default;
 
 private:
-    UINT indiceCount;
+    virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept = 0;
+    virtual const UINT GetIndiceCount() const noexcept = 0;
+private:
+    
     std::vector<std::unique_ptr<Bindable>> binds;
 };

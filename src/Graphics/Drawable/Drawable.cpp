@@ -9,13 +9,13 @@ void Drawable::Draw(Graphics& gfx) const noexcept{
         b->Bind(gfx);
     }
 
-    gfx.DrawIndexed(indiceCount);
+    for(auto& b : GetStaticBinds()){
+        b->Bind(gfx);
+    }
+
+    gfx.DrawIndexed(GetIndiceCount());
 }
 
 void Drawable::AddBind(std::unique_ptr<Bindable> bind) noexcept{
-    if(typeid(*bind) == typeid(IndexBuffer)){
-        auto naked_ptr = dynamic_cast<IndexBuffer*>(bind.get());
-        indiceCount = naked_ptr->GetCount();
-    } 
     binds.push_back( std::move( bind ) );
 }
