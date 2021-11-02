@@ -1,7 +1,34 @@
 #include "App.h"
+#include "Graphics/Drawable/Triangle.h"
+#include "Graphics/Drawable/Box.h"
 #include <sstream>
 #include <iomanip>
+#include <memory>
 App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
+	std::mt19937 rng( std::random_device{}() );
+	std::uniform_real_distribution<float> adist( 0.0f,3.1415f * 2.0f );
+	std::uniform_real_distribution<float> ddist( 0.0f,3.1415f * 2.0f );
+	std::uniform_real_distribution<float> odist( 0.0f,3.1415f * 0.3f );
+	std::uniform_real_distribution<float> rdist( 6.0f,20.0f );
+	for( auto i = 0; i < 1; i++ )
+	{
+		boxes.push_back( std::make_unique<Box>(
+			wnd.GetGraphics(),rng,adist,
+			ddist,odist,rdist
+		) );
+	}
+
+	for( auto i = 0; i < 1; i++ )
+	{
+		triangles.push_back( std::make_unique<Triangle>(
+			wnd.GetGraphics()
+		) );
+	}
+
+	wnd.GetGraphics().SetProjection( DirectX::XMMatrixPerspectiveLH( 1.0f,480.0f / 640.0f,0.5f,40.0f ) );
+}
+
+App::~App(){
 
 }
 
@@ -20,17 +47,15 @@ int App::Go() {
 
 void App::DoFrame()
 {
-    const float t = sin(timer.Peek())/2.0f + 0.5f;
-    wnd.GetGraphics().ClearBuffer(t,t,1.0f);
-	wnd.GetGraphics().DrawTestTriangle(
-		-timer.Peek(),
-		0.0f,
-		0.0f
-	);
-	wnd.GetGraphics().DrawTestTriangle(
-		timer.Peek(),
-		wnd.mouse.GetPosX() / 400.0f - 1.0f,
-		-wnd.mouse.GetPosY() / 300.0f + 1.0f
-	);
+    auto dt = timer.Peek();
+	wnd.GetGraphics().ClearBuffer(0.7f,0.0f,0.52f);
+	for(auto& b: boxes){
+		b->Update(dt);
+		b->Draw(wnd.GetGraphics());
+	}
+	for(auto& b: triangles){
+		b->Update(dt);
+		b->Draw(wnd.GetGraphics());
+	}
     wnd.GetGraphics().EndFrame();
 }

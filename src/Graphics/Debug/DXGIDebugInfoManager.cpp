@@ -1,7 +1,7 @@
 #include "DXGIDebugInfoManager.h"
 #include "Window.h"
 #include "Graphics/Graphics.h"
-#include "GraphicsThrowMacros.h"
+#include "Graphics/GraphicsThrowMacros.h"
 #include "WindowThrowMacros.h"
 #include <dxgidebug.h>
 #include <memory>
