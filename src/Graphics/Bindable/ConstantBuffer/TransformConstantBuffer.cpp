@@ -3,7 +3,9 @@
 TransformConstantBuffer::TransformConstantBuffer(Graphics& gfx, const Drawable& parent) noexcept
     :parent(parent)    
 {
-    vcbuf = std::make_unique<VertexConstantBuffer<DirectX::XMMATRIX>>(gfx);
+    if(!vcbuf){
+        vcbuf = std::make_unique<VertexConstantBuffer<DirectX::XMMATRIX>>(gfx);
+    }
 }
 
 void TransformConstantBuffer::Bind(Graphics& gfx) noexcept{
@@ -16,3 +18,5 @@ void TransformConstantBuffer::Bind(Graphics& gfx) noexcept{
 
     vcbuf->Bind(gfx);
 }
+
+std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> TransformConstantBuffer::vcbuf;
