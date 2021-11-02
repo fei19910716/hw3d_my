@@ -1,14 +1,14 @@
 #include "App.h"
-#include "Graphics/Drawable/Triangle.h"
-#include "Graphics/Drawable/Box.h"
+#include "Graphics/Drawable/Geometry/Triangle.h"
+#include "Graphics/Drawable/Geometry/Box.h"
 #include <sstream>
 #include <iomanip>
 #include <memory>
 App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 	std::mt19937 rng( std::random_device{}() );
 	std::uniform_real_distribution<float> adist( 0.0f,3.1415f * 2.0f );
-	std::uniform_real_distribution<float> ddist( 0.0f,3.1415f * 2.0f );
-	std::uniform_real_distribution<float> odist( 0.0f,3.1415f * 0.3f );
+	std::uniform_real_distribution<float> ddist( 0.0f,3.1415f * 1.0f );
+	std::uniform_real_distribution<float> odist( 0.0f,3.1415f * 0.08f );
 	std::uniform_real_distribution<float> rdist( 6.0f,20.0f );
 	for( auto i = 0; i < 2; i++ )
 	{

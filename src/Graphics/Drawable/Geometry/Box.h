@@ -1,5 +1,5 @@
 #pragma once
-#include "DrawableBase.h"
+#include "Graphics/Drawable/DrawableBase.h"
 
 class Box : public DrawableBase<Box>
 {
