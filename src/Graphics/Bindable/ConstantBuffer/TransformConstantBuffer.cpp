@@ -12,7 +12,7 @@ void TransformConstantBuffer::Bind(Graphics& gfx) noexcept{
     vcbuf->Update(
         gfx,
         DirectX::XMMatrixTranspose(
-            parent.GetTransform() * gfx.GetProjection()
+            parent.GetTransform() * gfx.GetCamera() * gfx.GetProjection()
         )
     );
 

@@ -75,6 +75,7 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 	drawables.reserve( nDrawables );
 	std::generate_n( std::back_inserter( drawables ),nDrawables,Factory{ wnd.GetGraphics() } );
 	wnd.GetGraphics().SetProjection( DirectX::XMMatrixPerspectiveLH( 1.0f,480.0f / 640.0f,0.5f,40.0f ) );
+	wnd.GetGraphics().SetCamera( DirectX::XMMatrixTranslation( 0.0f,0.0f,20.0f ) );
 }
 
 App::~App(){
