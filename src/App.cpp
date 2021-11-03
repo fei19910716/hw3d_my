@@ -1,6 +1,7 @@
 #include "App.h"
 #include "Graphics/Drawable/Geometry/Triangle.h"
 #include "Graphics/Drawable/Geometry/Box.h"
+#include "Graphics/Drawable/Geometry/SkinnedBox.h"
 #include "Graphics/Drawable/Geometry/Melon.h"
 #include "Graphics/Drawable/Geometry/Pyramid.h"
 #include "Graphics/Drawable/Geometry/Sheet.h"
@@ -47,6 +48,11 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 					gfx,rng,adist,ddist,
 					odist,rdist
 				);
+			case 4:
+				return std::make_unique<SkinnedBox>(
+					gfx,rng,adist,ddist,
+					odist,rdist
+				);
 			default:
 				assert( false && "bad drawable type in factory" );
 				return {};
@@ -62,12 +68,11 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 		std::uniform_real_distribution<float> bdist{ 0.4f,3.0f };
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
-		std::uniform_int_distribution<int> typedist{ 0,3 };
+		std::uniform_int_distribution<int> typedist{ 0,4 };
 	};
 
-	Factory f( wnd.GetGraphics() );
 	drawables.reserve( nDrawables );
-	std::generate_n( std::back_inserter( drawables ),nDrawables,f );
+	std::generate_n( std::back_inserter( drawables ),nDrawables,Factory{ wnd.GetGraphics() } );
 	wnd.GetGraphics().SetProjection( DirectX::XMMatrixPerspectiveLH( 1.0f,480.0f / 640.0f,0.5f,40.0f ) );
 }
 
