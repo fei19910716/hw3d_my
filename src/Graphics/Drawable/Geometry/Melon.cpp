@@ -85,12 +85,12 @@ Melon::Melon( Graphics& gfx,
 
 void Melon::Update( float dt ) noexcept
 {
-	roll += droll * dt /10;
-	pitch += dpitch * dt/10;
-	yaw += dyaw * dt/10;
-	theta += dtheta * dt/10;
-	phi += dphi * dt/10;
-	chi += dchi * dt/10;
+	roll += droll * dt;
+	pitch += dpitch * dt;
+	yaw += dyaw * dt;
+	theta += dtheta * dt;
+	phi += dphi * dt;
+	chi += dchi * dt;
 }
 
 DirectX::XMMATRIX Melon::GetTransform() const noexcept

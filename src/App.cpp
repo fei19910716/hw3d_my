@@ -3,11 +3,18 @@
 #include "Graphics/Drawable/Geometry/Box.h"
 #include "Graphics/Drawable/Geometry/Melon.h"
 #include "Graphics/Drawable/Geometry/Pyramid.h"
+#include "Graphics/Drawable/Geometry/Sheet.h"
 #include "Graphics/Drawable/Geometry/MathUtil.h"
 #include <sstream>
 #include <iomanip>
 #include <memory>
 #include <algorithm>
+
+#include "Graphics/Surface.h"
+#include "Graphics/GDIPlusManager.h"
+
+GDIPlusManager gdipm;
+
 App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 	class Factory
 {
@@ -35,6 +42,11 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 					gfx,rng,adist,ddist,
 					odist,rdist,longdist,latdist
 				);
+			case 3:
+				return std::make_unique<Sheet>(
+					gfx,rng,adist,ddist,
+					odist,rdist
+				);
 			default:
 				assert( false && "bad drawable type in factory" );
 				return {};
@@ -50,7 +62,7 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 		std::uniform_real_distribution<float> bdist{ 0.4f,3.0f };
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
-		std::uniform_int_distribution<int> typedist{ 0,2 };
+		std::uniform_int_distribution<int> typedist{ 0,3 };
 	};
 
 	Factory f( wnd.GetGraphics() );
@@ -81,7 +93,7 @@ void App::DoFrame()
     auto dt = timer.Peek();
 	wnd.GetGraphics().ClearBuffer(0.7f,0.0f,0.52f);
 	for(auto& b: drawables){
-		b->Update(dt);
+		b->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : dt);
 		b->Draw(wnd.GetGraphics());
 	}
     wnd.GetGraphics().EndFrame();
