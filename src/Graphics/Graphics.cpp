@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "Debug/DXError/dxerr.h"
 #include "GraphicsThrowMacros.h"
+#include "imgui/imgui_impl_dx11.h"
 #include <d3dcompiler.h>
 #include <sstream>
 #include <cmath>
@@ -104,6 +105,9 @@ Graphics::Graphics(HWND hWnd){
 	vp.TopLeftX = 0.0f;
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports( 1u,&vp );
+
+	// Init imgui d3d impl
+	ImGui_ImplDX11_Init(pDevice.Get(),pContext.Get());
 }
 
 void Graphics::ClearBuffer(float red, float green, float blue) noexcept{

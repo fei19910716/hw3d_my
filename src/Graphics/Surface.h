@@ -4,8 +4,10 @@
 #include <assert.h>
 #include <memory>
 
+// Surface类是对image的封装，即color数组，每个color表示一个像素
 class Surface{
 public:
+	// color类表示一个像素
     class Color{
     public:
         unsigned int dword;
