@@ -53,12 +53,17 @@ public:
 	Graphics& operator=( const Graphics& ) = delete;
     ~Graphics() = default;
     void EndFrame();
-    void ClearBuffer(float red, float green, float blue) noexcept;
+    void BeginFrame(float red, float green, float blue) noexcept;
 
     void DrawIndexed(UINT count) noexcept;
     void SetProjection(DirectX::XMMATRIX proj) noexcept;
     DirectX::XMMATRIX GetProjection() const noexcept;
+
+    void EnableImGui() noexcept;
+    void DisableImGui() noexcept;
+    bool IsImGuiEnabled() const noexcept;
 private:
+    bool imGuiEnabled = true;
     DirectX::XMMATRIX projection;
     Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
     Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;

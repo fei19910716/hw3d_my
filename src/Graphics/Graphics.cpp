@@ -2,6 +2,7 @@
 #include "Debug/DXError/dxerr.h"
 #include "GraphicsThrowMacros.h"
 #include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 #include <d3dcompiler.h>
 #include <sstream>
 #include <cmath>
@@ -110,7 +111,14 @@ Graphics::Graphics(HWND hWnd){
 	ImGui_ImplDX11_Init(pDevice.Get(),pContext.Get());
 }
 
-void Graphics::ClearBuffer(float red, float green, float blue) noexcept{
+void Graphics::BeginFrame(float red, float green, float blue) noexcept{
+	// imgui begin frame
+	if(imGuiEnabled){
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+	}
+
 	const float color[] = {red, green, blue, 1.0f};
 	pContext->ClearRenderTargetView(pTarget.Get(),color);
 	pContext->ClearDepthStencilView( pDSV.Get(),D3D11_CLEAR_DEPTH,1.0f,0u );
@@ -131,8 +139,27 @@ DirectX::XMMATRIX  Graphics::GetProjection() const noexcept{
 	return projection;
 }
 
+void Graphics::EnableImGui() noexcept{
+	imGuiEnabled = true;
+}
+
+void Graphics::DisableImGui() noexcept{
+	imGuiEnabled = false;
+}
+
+bool Graphics::IsImGuiEnabled() const noexcept{
+	return imGuiEnabled;
+}
+
 void Graphics::EndFrame()
 {
+	// imgui frame end
+	if(imGuiEnabled){
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
+
+
     HRESULT hr;
 	#ifndef NDEBUG
 	infoManager.Set();
@@ -198,13 +225,13 @@ HRESULT Graphics::HrException::GetErrorCode() const noexcept
 
 std::string Graphics::HrException::GetErrorString() const noexcept
 {
-	return DXGetErrorString( hr );
+	return DXGetErrorStringA( hr );
 }
 
 std::string Graphics::HrException::GetErrorDescription() const noexcept
 {
 	char buf[512];
-	DXGetErrorDescription( hr,buf,sizeof( buf ) );
+	DXGetErrorDescriptionA( hr,buf,sizeof( buf ) );
 	return buf;
 }
 

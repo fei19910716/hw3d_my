@@ -14,8 +14,6 @@
 #include "Graphics/Surface.h"
 #include "Graphics/GDIPlusManager.h"
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_dx11.h"
-#include "imgui/imgui_impl_win32.h"
 
 GDIPlusManager gdipm;
 
@@ -98,26 +96,27 @@ int App::Go() {
 
 void App::DoFrame()
 {
-    auto dt = timer.Peek();
-	wnd.GetGraphics().ClearBuffer(0.7f,0.0f,0.52f);
+    auto dt = timer.Mark();
+
+	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
+	{
+		wnd.GetGraphics().DisableImGui();
+	}
+	else
+	{
+		wnd.GetGraphics().EnableImGui();
+	}
+
+	wnd.GetGraphics().BeginFrame(0.7f,0.0f,0.52f);
 	for(auto& b: drawables){
 		b->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : dt);
 		b->Draw(wnd.GetGraphics());
 	}
 
-	// imgui staff
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
 	static bool show_demo_window = true;
-	if(show_demo_window){
+	if(show_demo_window && wnd.GetGraphics().IsImGuiEnabled()){
 		ImGui::ShowDemoWindow(&show_demo_window);
 	}
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-
 
 	// present
     wnd.GetGraphics().EndFrame();
