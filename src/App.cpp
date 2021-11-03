@@ -96,16 +96,8 @@ int App::Go() {
 
 void App::DoFrame()
 {
-    auto dt = timer.Mark();
-
-	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
-	{
-		wnd.GetGraphics().DisableImGui();
-	}
-	else
-	{
-		wnd.GetGraphics().EnableImGui();
-	}
+	static float speed_factor = 1.0f;
+    auto dt = timer.Mark() * speed_factor;
 
 	wnd.GetGraphics().BeginFrame(0.7f,0.0f,0.52f);
 	for(auto& b: drawables){
@@ -113,10 +105,16 @@ void App::DoFrame()
 		b->Draw(wnd.GetGraphics());
 	}
 
-	static bool show_demo_window = true;
-	if(show_demo_window && wnd.GetGraphics().IsImGuiEnabled()){
-		ImGui::ShowDemoWindow(&show_demo_window);
+	static char buffer[1024];
+
+	// imgui window to control simulation speed
+	if( ImGui::Begin( "Simulation Speed" ) )
+	{
+		ImGui::SliderFloat( "Speed Factor",&speed_factor,0.0f,4.0f );
+		ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate,ImGui::GetIO().Framerate );
+		ImGui::InputText( "Butts",buffer,sizeof( buffer ) );
 	}
+	ImGui::End();
 
 	// present
     wnd.GetGraphics().EndFrame();
