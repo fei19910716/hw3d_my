@@ -9,11 +9,11 @@ TransformConstantBuffer::TransformConstantBuffer(Graphics& gfx, const Drawable& 
 }
 
 void TransformConstantBuffer::Bind(Graphics& gfx) noexcept{
-    const auto model = parent.GetTransform();
+    const auto modelView = parent.GetTransform() * gfx.GetCamera();
     const Transforms tf = {
-        DirectX::XMMatrixTranspose(model),
+        DirectX::XMMatrixTranspose(modelView),
         DirectX::XMMatrixTranspose(
-            model * gfx.GetCamera() * gfx.GetProjection()
+            modelView * gfx.GetProjection()
         )
     };
     vcbuf->Update(gfx, tf);
