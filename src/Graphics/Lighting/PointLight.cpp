@@ -4,15 +4,15 @@
 PointLight::PointLight(Graphics& gfx,float radius)
     : mesh(gfx,radius), cbuf(gfx)
 {
-
+    Reset();
 }
 
 void PointLight::SpawnControlWindow() noexcept{
     if(ImGui::Begin("PointLight")){
         ImGui::Text("Postion");
-        ImGui::SliderFloat("X",&pos.x,-60.0f,60.0f,"%.1f");
-        ImGui::SliderFloat("Y",&pos.y,-60.0f,60.0f,"%.1f");
-        ImGui::SliderFloat("Z",&pos.z,-60.0f,60.0f,"%.1f");
+        ImGui::SliderFloat("X",&cbData.pos.x,-60.0f,60.0f,"%.1f");
+        ImGui::SliderFloat("Y",&cbData.pos.y,-60.0f,60.0f,"%.1f");
+        ImGui::SliderFloat("Z",&cbData.pos.z,-60.0f,60.0f,"%.1f");
         if(ImGui::Button("Reset")){
             Reset();
         }
@@ -20,13 +20,22 @@ void PointLight::SpawnControlWindow() noexcept{
     ImGui::End();
 }
 void PointLight::Reset() noexcept{
-    pos = {0.0f,0.0f,0.0f};
+    cbData = {
+		{ 0.0f,0.0f,0.0f },
+		{ 0.7f,0.7f,0.9f },
+		{ 0.05f,0.05f,0.05f },
+		{ 1.0f,1.0f,1.0f },
+		1.0f,
+		1.0f,
+		0.045f,
+		0.0075f,
+	};
 }
 void PointLight::Draw(Graphics& gfx) const noexcept{
-    mesh.SetPos(pos);
+    mesh.SetPos(cbData.pos);
     mesh.Draw(gfx);
 }
 void PointLight::Bind(Graphics& gfx) const noexcept{
-    cbuf.Update(gfx,PointLightCBuf{pos});
+    cbuf.Update(gfx,PointLightCBuf{cbData});
     cbuf.Bind(gfx);
 }
