@@ -75,7 +75,6 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 	drawables.reserve( nDrawables );
 	std::generate_n( std::back_inserter( drawables ),nDrawables,Factory{ wnd.GetGraphics() } );
 	wnd.GetGraphics().SetProjection( DirectX::XMMatrixPerspectiveLH( 1.0f,480.0f / 640.0f,0.5f,40.0f ) );
-	wnd.GetGraphics().SetCamera( DirectX::XMMatrixTranslation( 0.0f,0.0f,20.0f ) );
 }
 
 App::~App(){
@@ -101,6 +100,8 @@ void App::DoFrame()
     auto dt = timer.Mark() * speed_factor;
 
 	wnd.GetGraphics().BeginFrame(0.7f,0.0f,0.52f);
+	wnd.GetGraphics().SetCamera(camera.GetMatrix());
+
 	for(auto& b: drawables){
 		b->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : dt);
 		b->Draw(wnd.GetGraphics());
@@ -114,6 +115,8 @@ void App::DoFrame()
 		ImGui::Text( "Status: %s",wnd.kbd.KeyIsPressed( VK_SPACE ) ? "PAUSED" : "RUNNING" );
 	}
 	ImGui::End();
+
+	camera.SpawnControlWindow();
 
 	// present
     wnd.GetGraphics().EndFrame();
