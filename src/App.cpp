@@ -17,7 +17,7 @@
 
 GDIPlusManager gdipm;
 
-App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
+App::App():wnd(640,480,TEXT("The Donkey Fart Box")), light(wnd.GetGraphics()){
 	class Factory
 {
 	public:
@@ -27,37 +27,11 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")){
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
-			switch( typedist( rng ) )
-			{
-			case 0:
-				return std::make_unique<Pyramid>(
-					gfx,rng,adist,ddist,
-					odist,rdist
-				);
-			case 1:
-				return std::make_unique<Box>(
-					gfx,rng,adist,ddist,
-					odist,rdist,bdist
-				);
-			case 2:
-				return std::make_unique<Melon>(
-					gfx,rng,adist,ddist,
-					odist,rdist,longdist,latdist
-				);
-			case 3:
-				return std::make_unique<Sheet>(
-					gfx,rng,adist,ddist,
-					odist,rdist
-				);
-			case 4:
-				return std::make_unique<SkinnedBox>(
-					gfx,rng,adist,ddist,
-					odist,rdist
-				);
-			default:
-				assert( false && "bad drawable type in factory" );
-				return {};
-			}
+			
+			return std::make_unique<Box>(
+				gfx,rng,adist,ddist,
+				odist,rdist,bdist
+			);
 		}
 	private:
 		Graphics& gfx;
@@ -101,11 +75,13 @@ void App::DoFrame()
 
 	wnd.GetGraphics().BeginFrame(0.7f,0.0f,0.52f);
 	wnd.GetGraphics().SetCamera(camera.GetMatrix());
+	light.Bind(wnd.GetGraphics());
 
 	for(auto& b: drawables){
 		b->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : dt);
 		b->Draw(wnd.GetGraphics());
 	}
+	light.Draw(wnd.GetGraphics());
 
 	// imgui window to control simulation speed
 	if( ImGui::Begin( "Simulation Speed" ) )
@@ -117,6 +93,7 @@ void App::DoFrame()
 	ImGui::End();
 
 	camera.SpawnControlWindow();
+	light.SpawnControlWindow();
 
 	// present
     wnd.GetGraphics().EndFrame();
