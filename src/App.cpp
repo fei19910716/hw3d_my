@@ -76,7 +76,7 @@ void App::DoFrame()
 
 	wnd.GetGraphics().BeginFrame(0.7f,0.0f,0.52f);
 	wnd.GetGraphics().SetCamera(camera.GetMatrix());
-	light.Bind(wnd.GetGraphics());
+	light.Bind(wnd.GetGraphics(),camera.GetMatrix());
 
 	for(auto& b: drawables){
 		b->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : dt);
@@ -87,7 +87,7 @@ void App::DoFrame()
 	// imgui window to control simulation speed
 	if( ImGui::Begin( "Simulation Speed" ) )
 	{
-		ImGui::SliderFloat( "Speed Factor",&speed_factor,0.0f,4.0f );
+		ImGui::SliderFloat( "Speed Factor",&speed_factor,0.0f,6.0f,"%.4f",3.2f );
 		ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate,ImGui::GetIO().Framerate );
 		ImGui::Text( "Status: %s",wnd.kbd.KeyIsPressed( VK_SPACE ) ? "PAUSED" : "RUNNING" );
 	}
