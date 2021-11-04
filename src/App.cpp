@@ -27,10 +27,10 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")), light(wnd.GetGraphics()){
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
-			
+			const DirectX::XMFLOAT3 mat = { cdist( rng ),cdist( rng ),cdist( rng ) };
 			return std::make_unique<Box>(
 				gfx,rng,adist,ddist,
-				odist,rdist,bdist
+				odist,rdist,bdist,mat
 			);
 		}
 	private:
@@ -44,6 +44,7 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")), light(wnd.GetGraphics()){
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
 		std::uniform_int_distribution<int> typedist{ 0,4 };
+		std::uniform_real_distribution<float> cdist{ 0.0f,1.0f };
 	};
 
 	drawables.reserve( nDrawables );

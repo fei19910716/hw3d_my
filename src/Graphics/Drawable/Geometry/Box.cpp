@@ -9,7 +9,8 @@ Box::Box( Graphics& gfx,
 	std::uniform_real_distribution<float>& ddist,
 	std::uniform_real_distribution<float>& odist,
 	std::uniform_real_distribution<float>& rdist,
-	std::uniform_real_distribution<float>& bdist  ) noexcept
+	std::uniform_real_distribution<float>& bdist,
+	DirectX::XMFLOAT3 material  ) noexcept
 	:
 	r( rdist( rng ) ),
 	droll( ddist( rng ) ),
@@ -54,6 +55,13 @@ Box::Box( Graphics& gfx,
 		AddStaticBind( std::make_unique<Topology>( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
 	}
 	AddBind( std::make_unique<TransformConstantBuffer>( gfx,*this ) );
+
+	struct PSMaterialConstant{
+		alignas(16) DirectX::XMFLOAT3 color;
+	} colorConstant;
+
+	colorConstant.color = material;
+	AddBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx,colorConstant,1u));
 
 		// model deformation transform (per instance, not stored as bind)
 	dx::XMStoreFloat3x3(
