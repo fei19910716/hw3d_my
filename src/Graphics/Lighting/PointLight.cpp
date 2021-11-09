@@ -50,7 +50,7 @@ void PointLight::Draw(Graphics& gfx) const noexcept{
 void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept{
     auto dataCopy = cbData;
     const auto pos = DirectX::XMLoadFloat3(&cbData.pos);
-    DirectX::XMStoreFloat3(&dataCopy.pos,DirectX::XMVector3Transform(pos,view));
+    DirectX::XMStoreFloat3(&dataCopy.pos,DirectX::XMVector3Transform(pos,view)); // 对向量做变换
     cbuf.Update(gfx,dataCopy);
     cbuf.Bind(gfx);
 }
