@@ -16,11 +16,21 @@
 #include "Graphics/GDIPlusManager.h"
 #include "imgui/imgui.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 GDIPlusManager gdipm;
 
 App::App():wnd(640,480,TEXT("The Donkey Fart Box")), light(wnd.GetGraphics()){
+	Assimp::Importer imp;
+	auto model = imp.ReadFile( "models\\suzanne.obj",
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices
+	);
+	
 	class Factory
-{
+	{
 	public:
 		Factory( Graphics& gfx )
 			:

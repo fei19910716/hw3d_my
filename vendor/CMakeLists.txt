@@ -2,6 +2,7 @@ add_library(libvendor INTERFACE)
 
 set(vendor_libs
     imgui
+    assimp
 )
 
 foreach(vendor_lib ${vendor_libs})
