@@ -147,12 +147,12 @@ void App::SpawnBoxWindowManagerWindow() noexcept
 	if( ImGui::Begin( "Boxes" ) )
 	{
 		using namespace std::string_literals;
-		const auto preview = comboBoxIndex ? std::to_string( *comboBoxIndex ) : "Choose a box..."s;
+		const auto preview = comboBoxIndex.has_value() ? std::to_string( *comboBoxIndex ) : "Choose a box..."s;
 		if( ImGui::BeginCombo( "Box Number",preview.c_str() ) )
 		{
 			for( int i = 0; i < boxes.size(); i++ )
 			{
-				const bool selected = *comboBoxIndex == i;
+				const bool selected = comboBoxIndex.has_value() && (*comboBoxIndex == i);
 				if( ImGui::Selectable( std::to_string( i ).c_str(),selected ) )
 				{
 					comboBoxIndex = i;
@@ -175,8 +175,15 @@ void App::SpawnBoxWindowManagerWindow() noexcept
 
 void App::SpawnBoxWindows() noexcept
 {
-	for( auto id : boxControlIds )
+	for( auto i = boxControlIds.begin(); i != boxControlIds.end(); )
 	{
-		boxes[id]->SpawnControlWindow( id,wnd.GetGraphics() );
+		if( !boxes[*i]->SpawnControlWindow( *i,wnd.GetGraphics() ) )
+		{
+			i = boxControlIds.erase( i );
+		}
+		else
+		{
+			i++;
+		}
 	}
 }

@@ -15,8 +15,8 @@ public:
 
 	DirectX::XMMATRIX GetTransform() const noexcept override;
 
-	// 绘制UI
-	void SpawnControlWindow( int id,Graphics& gfx ) noexcept;
+	// 绘制UI returns false if window is closed
+	bool SpawnControlWindow( int id,Graphics& gfx ) noexcept;
 
 private:
 	// 更新box材质
