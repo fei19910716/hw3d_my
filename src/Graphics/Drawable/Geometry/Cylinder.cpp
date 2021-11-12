@@ -16,14 +16,7 @@ Cylinder::Cylinder( Graphics& gfx,std::mt19937& rng,
 
 	if( !IsStaticInitialized() )
 	{
-		struct Vertex
-		{
-			dx::XMFLOAT3 pos;
-			dx::XMFLOAT3 n;
-		};
-		auto model = Prism::MakeTesselatedIndependentCapNormals<Vertex>( tdist( rng ) );
-
-		AddStaticBind( std::make_unique<VertexBuffer>( gfx,model.vertices ) );
+		
 
 		auto pvs = std::make_unique<VertexShader>( gfx,L"D:\\GameEngine\\DirectX-Dev\\hw3d_my\\assets\\shaders\\PhongVS.hlsl" );
 		auto pvsbc = pvs->GetByteCode();
@@ -31,7 +24,7 @@ Cylinder::Cylinder( Graphics& gfx,std::mt19937& rng,
 
 		AddStaticBind( std::make_unique<PixelShader>( gfx,L"D:\\GameEngine\\DirectX-Dev\\hw3d_my\\assets\\shaders\\IndexedPhongPS.hlsl" ) );
 
-		AddStaticBind( std::make_unique<IndexBuffer>( gfx,model.indices ) );
+		
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
@@ -57,6 +50,17 @@ Cylinder::Cylinder( Graphics& gfx,std::mt19937& rng,
 		} matConst;
 		AddStaticBind( std::make_unique<PixelConstantBuffer<PSMaterialConstant>>( gfx,matConst,1u ) );
 	}
+
+	struct Vertex
+	{
+		dx::XMFLOAT3 pos;
+		dx::XMFLOAT3 n;
+	};
+	auto model = Prism::MakeTesselatedIndependentCapNormals<Vertex>( tdist( rng ) );
+
+	AddStaticBind( std::make_unique<VertexBuffer>( gfx,model.vertices ) );
+
+	AddStaticBind( std::make_unique<IndexBuffer>( gfx,model.indices ) );
 
 	AddBind( std::make_unique<TransformConstantBuffer>( gfx,*this ) );
 }

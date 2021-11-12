@@ -18,31 +18,7 @@ Pyramid::Pyramid( Graphics& gfx,
 
 	if( !IsStaticInitialized() )
 	{
-		struct Vertex
-		{
-			dx::XMFLOAT3 pos;
-			dx::XMFLOAT3 n;
-			std::array<char,4> color;
-			char padding;
-		};
-		const auto tesselation = tdist( rng );
-		auto model = Cone::MakeTesselatedIndependentFaces<Vertex>( tesselation );
-		// set vertex colors for mesh (tip red blending to blue base)
-		for( auto& v : model.vertices )
-		{
-			v.color = { (char)10,(char)10,(char)255 };
-		}
-		for( int i = 0; i < tesselation; i++ )
-		{
-			model.vertices[i * 3].color = { (char)255,(char)10,(char)10 };
-		}
-		// squash mesh a bit in the z direction
-		// deform mesh linearly
-		model.Transform( dx::XMMatrixScaling( 1.0f,1.0f,0.7f ) );
-		// add normals
-		model.SetNormalIndependentFlat();
-
-		AddStaticBind( std::make_unique<VertexBuffer>( gfx,model.vertices ) );
+		
 
 		auto pvs = std::make_unique<VertexShader>( gfx,L"D:\\GameEngine\\DirectX-Dev\\hw3d_my\\assets\\shaders\\BlendPhongVS.hlsl" );
 		auto pvsbc = pvs->GetByteCode();
@@ -50,7 +26,7 @@ Pyramid::Pyramid( Graphics& gfx,
 
 		AddStaticBind( std::make_unique<PixelShader>( gfx,L"D:\\GameEngine\\DirectX-Dev\\hw3d_my\\assets\\shaders\\BlendPhongPS.hlsl" ) );
 
-		AddStaticBind( std::make_unique<IndexBuffer>( gfx,model.indices ) );
+		
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
@@ -70,6 +46,34 @@ Pyramid::Pyramid( Graphics& gfx,
 		} colorConst;
 		AddStaticBind( std::make_unique<PixelConstantBuffer<PSMaterialConstant>>( gfx,colorConst,1u ) );
 	}
+
+	struct Vertex
+	{
+		dx::XMFLOAT3 pos;
+		dx::XMFLOAT3 n;
+		std::array<char,4> color;
+		char padding;
+	};
+	const auto tesselation = tdist( rng );
+	auto model = Cone::MakeTesselatedIndependentFaces<Vertex>( tesselation );
+	// set vertex colors for mesh (tip red blending to blue base)
+	for( auto& v : model.vertices )
+	{
+		v.color = { (char)10,(char)10,(char)255 };
+	}
+	for( int i = 0; i < tesselation; i++ )
+	{
+		model.vertices[i * 3].color = { (char)255,(char)10,(char)10 };
+	}
+	// squash mesh a bit in the z direction
+	// deform mesh linearly
+	model.Transform( dx::XMMatrixScaling( 1.0f,1.0f,0.7f ) );
+	// add normals
+	model.SetNormalIndependentFlat();
+
+	AddStaticBind( std::make_unique<VertexBuffer>( gfx,model.vertices ) );
+
+	AddStaticBind( std::make_unique<IndexBuffer>( gfx,model.indices ) );
 
 	AddBind( std::make_unique<TransformConstantBuffer>( gfx,*this ) );
 }
