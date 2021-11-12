@@ -64,7 +64,7 @@ public:
 			case Float4Color:
 				return sizeof( XMFLOAT3 );
 			case BGRAColor:
-				return sizeof( unsigned int );
+				return sizeof( ::BGRAColor );
 			}
 			assert( "Invalid element type" && false );
 			return 0u;
@@ -106,6 +106,10 @@ public:
 	{
 		return elements.empty() ? 0u : elements.back().GetOffsetAfter();
 	}
+
+    size_t GetElementCount() const noexcept{
+        return elements.size();
+    }
 private:
 	std::vector<Element> elements; // vertexLayout 维护所有的属性
 };
@@ -190,7 +194,7 @@ public:
 			assert( "Bad element type" && false );
 		}	
 	}
-private:
+protected:
     // Vertex由字节流和描述信息构造
 	Vertex( char* pData,const VertexLayout& layout ) noexcept
 		:
@@ -199,12 +203,13 @@ private:
 	{
 		assert( pData != nullptr );
 	}
+private:
 	template<typename First,typename ...Rest>
 	// enables parameter pack setting of multiple parameters by element index
 	void SetAttributeByIndex( size_t i,First&& first,Rest&&... rest ) noexcept
 	{
 		SetAttributeByIndex( i,std::forward<First>( first ) );
-		SetAttributeByIndex( i,std::forward<Rest>( rest )... );
+		SetAttributeByIndex( i + 1,std::forward<Rest>( rest )... );
 	}
 	// helper to reduce code duplication in SetAttributeByIndex
 	template<typename Dest,typename Src>
@@ -222,6 +227,22 @@ private:
 private:
 	char* pData = nullptr;
 	const VertexLayout& layout;
+};
+
+class ConstVertex
+{
+public:
+	ConstVertex( const Vertex& v ) noexcept
+		:
+		vertex( v )
+	{}
+	template<VertexLayout::ElementType Type>
+	const auto& Attr() const noexcept
+	{
+		return const_cast<Vertex&>(vertex).Attr<Type>();
+	}
+private:
+	Vertex vertex;
 };
 
 class VertexBuffer
@@ -242,6 +263,7 @@ public:
 	template<typename ...Params>
 	void EmplaceBack( Params&&... params ) noexcept
 	{
+		assert( sizeof...(params) == layout.GetElementCount() && "Param count doesn't match number of vertex elements" );
 		buffer.resize( buffer.size() + layout.Size() );
 		Back().SetAttributeByIndex( 0u,std::forward<Params>( params )... );
 	}
@@ -259,6 +281,19 @@ public:
 	{
 		assert( i < Size() );
 		return Vertex{ buffer.data() + layout.Size() * i,layout };
+	}
+
+	ConstVertex Back() const noexcept
+	{
+		return const_cast<VertexBuffer*>(this)->Back();
+	}
+	ConstVertex Front() const noexcept
+	{
+		return const_cast<VertexBuffer*>(this)->Front();
+	}
+	ConstVertex operator[]( size_t i ) const noexcept
+	{
+		return const_cast<VertexBuffer&>(*this)[i];
 	}
 private:
 	std::vector<char> buffer;
