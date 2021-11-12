@@ -32,44 +32,44 @@ public:
 	template<> struct Map<Position2D>
 	{
 		using SysType = DirectX::XMFLOAT2;
-		DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
-		const char* semantic = "Position";
+		static constexpr  DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+		static constexpr  const char* semantic = "Position";
 	};
 	template<> struct Map<Position3D>
 	{
 		using SysType = DirectX::XMFLOAT3;
-		DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
-		const char* semantic = "Position";
+		static constexpr  DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+		static constexpr  const char* semantic = "Position";
 	};
 	template<> struct Map<Texture2D>
 	{
 		using SysType = DirectX::XMFLOAT2;
-		DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
-		const char* semantic = "Texcoord";
+		static constexpr  DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+		static constexpr  const char* semantic = "Texcoord";
 	};
 	template<> struct Map<Normal>
 	{
 		using SysType = DirectX::XMFLOAT3;
-		DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
-		const char* semantic = "Normal";
+		static constexpr  DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+		static constexpr  const char* semantic = "Normal";
 	};
 	template<> struct Map<Float3Color>
 	{
 		using SysType = DirectX::XMFLOAT3;
-		DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
-		const char* semantic = "Color";
+		static constexpr  DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+		static constexpr  const char* semantic = "Color";
 	};
 	template<> struct Map<Float4Color>
 	{
 		using SysType = DirectX::XMFLOAT4;
-		DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		const char* semantic = "Color";
+		static constexpr  DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		static constexpr  const char* semantic = "Color";
 	};
 	template<> struct Map<BGRAColor>
 	{
 		using SysType = fordexp::BGRAColor;
-		DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-		const char* semantic = "Color";
+		static constexpr  DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		static constexpr  const char* semantic = "Color";
 	};
 
 
