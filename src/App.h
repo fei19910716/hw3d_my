@@ -14,6 +14,10 @@ public:
 
 private:
     void DoFrame();
+
+    void SpawnSimulationWindow() noexcept;
+	void SpawnBoxWindowManagerWindow() noexcept;
+	void SpawnBoxWindows() noexcept;
 private:
     ImGuiManager imgui;
     Window wnd;
@@ -23,6 +27,8 @@ private:
     std::vector<std::unique_ptr<class Drawable>> drawables;
     std::vector<class Box*> boxes;
     static constexpr size_t nDrawables = 180;
+
+    float speed_factor = 1.0f;
 
     std::optional<int> comboBoxIndex;
 	std::set<int> boxControlIds;
