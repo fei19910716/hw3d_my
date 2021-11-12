@@ -20,6 +20,22 @@ public:
     
     virtual ~Drawable()  = default;
 
+    //
+    // 查询物体身上的bindable对象
+    //
+    template<class T>
+	T* QueryBindable() noexcept
+	{
+		for( auto& pb : binds )
+		{
+			if( auto pt = dynamic_cast<T*>(pb.get()) )
+			{
+				return pt;
+			}
+		}
+		return nullptr;
+	}
+
 private:
     virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept = 0;
     virtual const UINT GetIndiceCount() const noexcept = 0;

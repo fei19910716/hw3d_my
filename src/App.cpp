@@ -74,6 +74,17 @@ App::App():wnd(640,480,TEXT("The Donkey Fart Box")), light(wnd.GetGraphics()){
 
 	drawables.reserve( nDrawables );
 	std::generate_n( std::back_inserter( drawables ),nDrawables,Factory{ wnd.GetGraphics() } );
+
+	// init box pointers for editing instance parameters
+	for( auto& pd : drawables )
+	{
+		if( auto pb = dynamic_cast<Box*>(pd.get()) )
+		{
+			boxes.push_back( pb );
+		}
+	}
+
+
 	wnd.GetGraphics().SetProjection( DirectX::XMMatrixPerspectiveLH( 1.0f,480.0f / 640.0f,0.5f,40.0f ) );
 }
 
@@ -120,6 +131,9 @@ void App::DoFrame()
 
 	camera.SpawnControlWindow();
 	light.SpawnControlWindow();
+
+	// imgui window to adjust box instance parameters
+	boxes.front()->SpawnControlWindow( 69,wnd.GetGraphics() );
 
 	// present
     wnd.GetGraphics().EndFrame();
