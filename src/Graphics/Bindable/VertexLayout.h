@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <type_traits>
 
+namespace fordexp{
 struct BGRAColor
 {
 	unsigned char a;
@@ -64,7 +65,7 @@ public:
 			case Float4Color:
 				return sizeof( XMFLOAT3 );
 			case BGRAColor:
-				return sizeof( ::BGRAColor );
+				return sizeof( fordexp::BGRAColor );
 			}
 			assert( "Invalid element type" && false );
 			return 0u;
@@ -252,6 +253,10 @@ public:
 		:
 		layout( std::move( layout ) )
 	{}
+	const char* GetData() const noexcept
+	{
+		return buffer.data();
+	}
 	const VertexLayout& GetLayout() const noexcept
 	{
 		return layout;
@@ -259,6 +264,10 @@ public:
 	size_t Size() const noexcept
 	{
 		return buffer.size() / layout.Size();
+	}
+	size_t SizeBytes() const noexcept
+	{
+		return buffer.size();
 	}
 	template<typename ...Params>
 	void EmplaceBack( Params&&... params ) noexcept
@@ -299,3 +308,4 @@ private:
 	std::vector<char> buffer;
 	VertexLayout layout;
 };
+}
