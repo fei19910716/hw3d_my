@@ -21,10 +21,23 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "Graphics/Bindable/VertexLayout.h"
+
 GDIPlusManager gdipm;
+
+void f()
+{
+	VertexLayout vl;
+	vl.Append<VertexLayout::Position3D>()
+		.Append<VertexLayout::Normal>();
+	VertexBuffer vb( std::move( vl ) );
+	vb.EmplaceBack( DirectX::XMFLOAT3{1.0f,1.0f,5.0f},DirectX::XMFLOAT3{ 2.0f,1.0f,4.0f } );
+	auto pos = vb[0].Attr<VertexLayout::Position3D>();
+}
 
 App::App():wnd(640,480,TEXT("The Donkey Fart Box")), light(wnd.GetGraphics()){
 
+	f();
 	class Factory
 	{
 	public:
