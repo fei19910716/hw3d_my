@@ -15,7 +15,8 @@ public:
 
     virtual DirectX::XMMATRIX GetTransform() const noexcept = 0;
     void Draw(Graphics& gfx) const noexcept;
-    virtual void Update(float dt) noexcept = 0;
+    virtual void Update(float dt) noexcept
+    {}
     void AddBind(std::unique_ptr<Bindable> bind) noexcept;
     
     virtual ~Drawable()  = default;

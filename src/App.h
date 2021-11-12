@@ -4,7 +4,7 @@
 #include "ImGuiManager.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Lighting/PointLight.h"
-
+#include "Drawable/Model.h"
 #include <set>
 class App{
 public:
@@ -14,22 +14,14 @@ public:
 
 private:
     void DoFrame();
-
-    void SpawnSimulationWindow() noexcept;
-	void SpawnBoxWindowManagerWindow() noexcept;
-	void SpawnBoxWindows() noexcept;
 private:
     ImGuiManager imgui;
     Window wnd;
     FTimer timer;
     Camera camera;
     PointLight light;
-    std::vector<std::unique_ptr<class Drawable>> drawables;
-    std::vector<class Box*> boxes;
-    static constexpr size_t nDrawables = 180;
 
     float speed_factor = 1.0f;
 
-    std::optional<int> comboBoxIndex;
-	std::set<int> boxControlIds;
+    Model nano{ wnd.GetGraphics(),"D:\\GameEngine\\DirectX-Dev\\hw3d_my\\assets\\models\\suzanne.obj" };
 };

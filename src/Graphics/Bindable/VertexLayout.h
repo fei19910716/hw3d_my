@@ -29,6 +29,7 @@ public:
 	};
 
 	template<ElementType> struct Map;
+	// 进行模板特化
 	template<> struct Map<Position2D>
 	{
 		using SysType = DirectX::XMFLOAT2;
@@ -121,6 +122,35 @@ public:
 		{
 			return type;
 		}
+
+		D3D11_INPUT_ELEMENT_DESC GetDesc() const noexcept
+		{
+			switch( type )
+			{
+			case Position2D:
+				return GenerateDesc<Position2D>( GetOffset() );
+			case Position3D:
+				return GenerateDesc<Position3D>( GetOffset() );
+			case Texture2D:
+				return GenerateDesc<Texture2D>( GetOffset() );
+			case Normal:
+				return GenerateDesc<Normal>( GetOffset() );
+			case Float3Color:
+				return GenerateDesc<Float3Color>( GetOffset() );
+			case Float4Color:
+				return GenerateDesc<Float4Color>( GetOffset() );
+			case BGRAColor:
+				return GenerateDesc<BGRAColor>( GetOffset() );
+			}
+			assert( "Invalid element type" && false );
+			return { "INVALID",0,DXGI_FORMAT_UNKNOWN,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 };
+		}
+	private:
+		template<ElementType type>
+		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc( size_t offset ) noexcept
+		{
+			return { Map<type>::semantic,0,Map<type>::dxgiFormat,0,(UINT)offset,D3D11_INPUT_PER_VERTEX_DATA,0 };
+		}
 	private:
 		ElementType type;
 		size_t offset;
@@ -158,6 +188,17 @@ public:
     size_t GetElementCount() const noexcept{
         return elements.size();
     }
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noexcept
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> desc;
+		desc.reserve( GetElementCount() );
+		for( const auto& e : elements )
+		{
+			desc.push_back( e.GetDesc() );
+		}
+		return desc;
+	}
 private:
 	std::vector<Element> elements; // vertexLayout 维护所有的属性
 };
